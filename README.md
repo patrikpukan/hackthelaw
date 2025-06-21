@@ -1,14 +1,33 @@
-# Legal RAG Agent with Change History
+# Legal Memory System - Hack the Law 2025
 
-A sophisticated legal document processing system that uses Retrieval-Augmented Generation (RAG) to provide intelligent document analysis with comprehensive change history tracking.
+A sophisticated legal document processing system designed for the **Hack the Law 2025** hackathon challenge. This prototype demonstrates how AI can behave like a junior lawyer with perfect memory, tracking legal positions across multiple documents and reasoning about relationships that span contracts, emails, policies, and negotiations.
+
+## Challenge Background
+
+In legal work, risk and meaning rarely live in just one document. They emerge across a web of contracts, emails, policies, side letters, and internal notes, often written by different people at different times. Lawyers naturally connect these dots—they remember what was agreed in one place and apply it somewhere else, notice contradictions between documents, and track how legal positions evolve over time.
+
+Most AI tools treat each document as a closed box and lose sight of the bigger picture. This prototype addresses that limitation by creating a **legal memory system** that can recall relevant past agreements, spot conflicts across matters, and determine whether clauses are consistent with previous negotiations.
+
+## Our Solution
+
+This system goes beyond simple summarization or search to provide intelligent legal memory capabilities:
 
 ## Features
+
+### Core Legal Memory Capabilities
+
+- **Cross-Document Position Tracking**: Monitor how legal positions evolve across drafts, contracts, and negotiations
+- **Intelligent Conflict Detection**: Automatically flag contradictions, duplications, and subtle inconsistencies across related documents
+- **Contextual Content Linking**: Cluster related clauses that discuss the same obligations using different language across contracts, policies, and memos
+- **Legal Recall Intelligence**: Answer questions like "Have we agreed to something like this before?" and "What was our fallback position last time?"
+- **Timeline-Aware Analysis**: Track how liability caps, termination rights, and other key terms change through negotiation cycles
+
+### Technical Implementation
 
 - **Multi-format Document Processing**: Support for PDF, DOCX, TXT, and RTF files
 - **Intelligent Text Chunking**: Legal clause-aware text segmentation
 - **Change History Tracking**: Semantic analysis of clause changes over time
-- **Conflict Detection**: Automated identification of conflicting clauses
-- **Interactive Chat Interface**: RAG-powered document Q&A
+- **Interactive Chat Interface**: RAG-powered document Q&A that remembers context across conversations
 - **Vector Search**: Semantic similarity search across document corpus
 - **Background Processing**: Async document processing with Celery workers
 
@@ -103,12 +122,20 @@ curl -X POST "http://localhost:8000/api/v1/documents/upload" \
      -F "file=@contract.pdf"
 ```
 
-### Ask Questions
+### Ask Legal Memory Questions
 
 ```bash
 curl -X POST "http://localhost:8000/api/v1/chat/query" \
      -H "Content-Type: application/json" \
-     -d '{"message": "What are the payment terms in the uploaded contracts?"}'
+     -d '{"message": "Have we previously agreed to a 30-day termination clause with this client?"}'
+
+curl -X POST "http://localhost:8000/api/v1/chat/query" \
+     -H "Content-Type: application/json" \
+     -d '{"message": "What liability caps have we negotiated across all contracts this year?"}'
+
+curl -X POST "http://localhost:8000/api/v1/chat/query" \
+     -H "Content-Type: application/json" \
+     -d '{"message": "Are there any conflicting confidentiality terms between the NDA and service agreement?"}'
 ```
 
 ### Check Processing Status
@@ -157,15 +184,15 @@ flake8 app/
 
 ### Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `DEBUG` | Enable debug mode | `false` |
-| `DATABASE_URL` | PostgreSQL connection string | Required |
-| `REDIS_URL` | Redis connection string | Required |
-| `WEAVIATE_URL` | Weaviate endpoint | Required |
-| `MAX_FILE_SIZE` | Maximum upload file size (bytes) | `52428800` |
-| `CHUNK_SIZE` | Text chunking size (tokens) | `500` |
-| `EMBEDDING_MODEL` | Sentence transformer model | `all-MiniLM-L6-v2` |
+| Variable          | Description                      | Default            |
+| ----------------- | -------------------------------- | ------------------ |
+| `DEBUG`           | Enable debug mode                | `false`            |
+| `DATABASE_URL`    | PostgreSQL connection string     | Required           |
+| `REDIS_URL`       | Redis connection string          | Required           |
+| `WEAVIATE_URL`    | Weaviate endpoint                | Required           |
+| `MAX_FILE_SIZE`   | Maximum upload file size (bytes) | `52428800`         |
+| `CHUNK_SIZE`      | Text chunking size (tokens)      | `500`              |
+| `EMBEDDING_MODEL` | Sentence transformer model       | `all-MiniLM-L6-v2` |
 
 ### Chunking Strategies
 
@@ -216,23 +243,41 @@ docker-compose up -d
 
 ## Roadmap
 
-### Phase 1 (Current)
-- ✅ Basic document upload and processing
-- ✅ Text extraction and chunking
-- ✅ Database schema and API structure
-- ✅ Docker deployment setup
+### Phase 1 (Hackathon Demo)
 
-### Phase 2 (Next)
-- 🔄 Vector embeddings and similarity search
-- 🔄 Basic RAG chat functionality
-- ⏳ Change history detection
-- ⏳ Conflict identification
+- ✅ Multi-document ingestion and processing
+- ✅ Legal clause-aware chunking and vectorization
+- ✅ Cross-document semantic search
+- ✅ Basic conflict detection framework
+- ✅ RESTful API with Docker deployment
 
-### Phase 3 (Future)
-- ⏳ Advanced clause matching
-- ⏳ ML-based conflict resolution
-- ⏳ Web frontend interface
-- ⏳ Advanced analytics and reporting
+### Phase 2 (Post-Hackathon Enhancement)
+
+- 🔄 Advanced legal memory queries and reasoning
+- 🔄 Timeline-based position tracking
+- 🔄 Sophisticated conflict resolution suggestions
+- ⏳ Enhanced clause similarity matching
+- ⏳ Interactive legal memory dashboard
+
+### Phase 3 (Production Roadmap)
+
+- ⏳ Machine learning-enhanced pattern recognition
+- ⏳ Integration with document management systems
+- ⏳ Advanced analytics and negotiation insights
+- ⏳ Multi-tenant enterprise deployment
+- ⏳ Real-time collaboration features
+
+## Hack the Law 2025 - Innovation Focus
+
+This prototype demonstrates how AI can transcend traditional document processing limitations by:
+
+1. **Thinking Like a Lawyer**: Understanding that legal meaning spans multiple documents and evolves over time
+2. **Perfect Memory**: Never forgetting previous agreements, positions, or negotiation outcomes
+3. **Pattern Recognition**: Identifying subtle relationships and conflicts that human reviewers might miss
+4. **Contextual Intelligence**: Providing answers that consider the full legal context, not just isolated document fragments
+5. **Proactive Insights**: Surfacing relevant historical information before it's explicitly requested
+
+The system serves as a **digital legal memory** that can be consulted and reasoned with, moving beyond simple search to provide intelligent, context-aware legal assistance.
 
 ## Contributing
 
@@ -248,4 +293,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Support
 
-For questions and support, please open an issue in the repository or contact the development team. 
+For questions and support, please open an issue in the repository or contact the development team.
