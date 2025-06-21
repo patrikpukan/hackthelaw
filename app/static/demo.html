@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal RAG Agent - DEMO MODE</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <style>
+        /* Demo styles */
+        .demo-banner {
+            background: linear-gradient(90deg, #ffd700 0%, #ffed4e 100%);
+            color: #2d3748;
+            padding: 0.5rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .status-dot[style*="ffd700"] {
+            animation: pulse-gold 2s infinite;
+        }
+        
+        @keyframes pulse-gold {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .demo-mode .message-content {
+            border-left: 3px solid #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo Banner -->
+    <div class="demo-banner">
+        🎭 DEMO MODE • Legal RAG Agent Simulation • Try functionality without API setup
+    </div>
+
+    <div class="container demo-mode">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-balance-scale"></i>
+                    <h1>Legal RAG Agent <span style="font-size: 0.7em; color: #ffd700;">DEMO</span></h1>
+                </div>
+                <div class="status" id="status">
+                    <i class="fas fa-circle status-dot"></i>
+                    <span>Initializing...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Left Panel: Document Management -->
+            <div class="left-panel">
+                <div class="panel-header">
+                    <i class="fas fa-file-upload"></i>
+                    <h2>Documents (DEMO)</h2>
+                </div>
+
+                <!-- File Upload -->
+                <div class="upload-section">
+                    <div class="upload-zone" id="uploadZone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>DEMO: Upload is simulated or <span class="upload-text">use ready documents</span></p>
+                        <input type="file" id="fileInput" accept=".pdf,.docx,.txt" hidden>
+                        <div class="file-types">
+                            In demo mode: ready documents below
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="uploadBtn">
+                        <i class="fas fa-magic"></i>
+                        Simulate Upload
+                    </button>
+                </div>
+
+                <!-- Documents List -->
+                <div class="documents-section">
+                    <h3>Ready demo documents</h3>
+                    <div class="documents-list" id="documentsList">
+                        <div class="empty-state">
+                            <i class="fas fa-magic"></i>
+                            <p>Loading demo documents...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Chat Interface -->
+            <div class="right-panel">
+                <div class="panel-header">
+                    <i class="fas fa-comments"></i>
+                    <h2>Legal Chat (DEMO)</h2>
+                    <div class="llm-selector">
+                        <select id="llmProvider">
+                            <option value="groq">Groq (DEMO)</option>
+                            <option value="openai">OpenAI (DEMO)</option>
+                            <option value="vertexai" selected>Vertex AI (DEMO)</option>
+                            <option value="mock">Mock (DEMO)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message bot-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>🎭 <strong>DEMO MODE ACTIVATED!</strong></p>
+                                <p>Welcome to the Legal RAG Agent demonstration!</p>
+                                <p>🔹 Select a document on the left<br>
+                                   🔹 Ask a question or use quick buttons<br>
+                                   🔹 Get detailed response from AI</p>
+                                <div class="message-time">DEMO System</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input -->
+                    <div class="chat-input-section">
+                        <div class="quick-questions">
+                            <button class="quick-btn" data-question="Analyze the main terms of this contract">
+                                <i class="fas fa-search"></i> Contract Analysis
+                            </button>
+                            <button class="quick-btn" data-question="What are the risks in this document?">
+                                <i class="fas fa-exclamation-triangle"></i> Find Risks
+                            </button>
+                            <button class="quick-btn" data-question="Explain the termination conditions">
+                                <i class="fas fa-handshake"></i> Termination Terms
+                            </button>
+                            <button class="quick-btn" data-question="What salary is specified in the contract?">
+                                <i class="fas fa-money-bill-wave"></i> Salary
+                            </button>
+                        </div>
+
+                        <div class="chat-input">
+                            <input type="text" id="messageInput" placeholder="Loading..." disabled>
+                            <button id="sendBtn" disabled>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p id="loadingText">Processing request...</p>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toastContainer"></div>
+    </div>
+
+    <!-- Demo Footer -->
+    <div style="background: #2d3748; color: white; padding: 1rem; text-align: center; font-size: 0.9rem;">
+        <p>🚀 <strong>Legal RAG Agent</strong> • 
+           DEMO version with full functionality simulation • 
+           For real API run: <code style="background: rgba(255,255,255,0.2); padding: 0.2rem 0.4rem; border-radius: 3px;">docker-compose -f docker-compose.frontend.yml up</code>
+        </p>
+    </div>
+
+    <script src="demo-script.js"></script>
+</body>
+</html> 

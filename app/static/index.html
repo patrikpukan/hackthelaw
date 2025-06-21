@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memora - AI Legal Assistant</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"
+      rel="stylesheet"
+    />
+    <link href="/static/styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-content">
+          <div class="logo">
+            <i class="fas fa-balance-scale"></i>
+            <h1>Memora - Legal Memory System</h1>
+          </div>
+          <div class="status" id="status">
+            <img
+              src="/static/CS_RGB.svg"
+              alt="CS Logo"
+              style="height: 40px; width: auto"
+            />
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="main">
+        <!-- Left Panel: Document Management -->
+        <div class="left-panel">
+          <div class="panel-header">
+            <i class="fas fa-file-upload"></i>
+            <h2>Documents</h2>
+          </div>
+
+          <!-- File Upload -->
+          <div class="upload-section">
+            <div class="upload-zone" id="uploadZone">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <p>
+                Drag documents here or
+                <span class="upload-text">choose files</span>
+              </p>
+              <input
+                type="file"
+                id="fileInput"
+                accept=".pdf,.docx,.txt"
+                multiple
+                hidden
+              />
+              <div class="file-types">
+                Supported: PDF, DOCX, TXT (Multiple files supported)
+              </div>
+            </div>
+            <div class="upload-buttons">
+              <button class="btn btn-primary" id="uploadBtn" disabled>
+                <i class="fas fa-upload"></i>
+                Upload Documents
+              </button>
+              <button class="btn btn-secondary" id="importWebBtn">
+                <i class="fas fa-globe"></i>
+                Import from Web
+              </button>
+            </div>
+
+            <!-- Upload Progress -->
+            <div
+              class="upload-progress"
+              id="uploadProgress"
+              style="display: none"
+            >
+              <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+              <div class="progress-text" id="progressText">
+                Uploading documents...
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Management Tools -->
+          <div class="document-tools">
+            <div class="search-section">
+              <div class="search-input">
+                <i class="fas fa-search"></i>
+                <input
+                  type="text"
+                  id="documentSearch"
+                  placeholder="Search documents..."
+                />
+                <button
+                  class="clear-search"
+                  id="clearSearch"
+                  style="display: none"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="filter-section">
+              <div class="filter-group">
+                <select id="statusFilter">
+                  <option value="">All Status</option>
+                  <option value="completed">Completed</option>
+                  <option value="processing">Processing</option>
+                  <option value="pending">Pending</option>
+                  <option value="failed">Failed</option>
+                </select>
+                <select id="typeFilter">
+                  <option value="">All Types</option>
+                  <option value="pdf">PDF</option>
+                  <option value="docx">DOCX</option>
+                  <option value="txt">TXT</option>
+                </select>
+                <select id="sortBy">
+                  <option value="date_desc">Newest First</option>
+                  <option value="date_asc">Oldest First</option>
+                  <option value="name_asc">Name A-Z</option>
+                  <option value="name_desc">Name Z-A</option>
+                  <option value="size_desc">Largest First</option>
+                  <option value="size_asc">Smallest First</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="selection-tools">
+              <div class="selection-info" id="selectionInfo">
+                <i class="fas fa-info-circle"></i>
+                <span
+                  >Click to select/deselect • Hold Ctrl/Cmd for multi-select •
+                  Shift for range</span
+                >
+              </div>
+              <div class="bulk-actions" id="bulkActions" style="display: none">
+                <button class="btn btn-small btn-danger" id="deleteSelected">
+                  <i class="fas fa-trash"></i> Delete Selected
+                </button>
+                <button
+                  class="btn btn-small btn-primary"
+                  id="versionManagementBtn"
+                >
+                  <i class="fas fa-code-branch"></i> Version Management
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Documents List -->
+          <div class="documents-section">
+            <div class="documents-header">
+              <div class="library-title">
+                <h3>Document Library</h3>
+                <div class="document-counter" id="documentCounter">
+                  <span>0 documents</span>
+                </div>
+              </div>
+              <div class="view-controls">
+                <button class="view-btn" id="selectAllBtn">
+                  <i class="fas fa-check-square"></i> Select All
+                </button>
+                <button
+                  class="view-btn"
+                  id="clearSelectionBtn"
+                  style="display: none"
+                >
+                  <i class="fas fa-square"></i> Clear Selection
+                </button>
+              </div>
+            </div>
+
+            <div class="documents-list" id="documentsList">
+              <div class="empty-state">
+                <i class="fas fa-folder-open"></i>
+                <p>No documents uploaded</p>
+              </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination" style="display: none">
+              <button class="pagination-btn" id="prevPage" disabled>
+                <i class="fas fa-chevron-left"></i> Previous
+              </button>
+              <div class="pagination-info">
+                <span id="pageInfo">Page 1 of 1</span>
+                <select id="pageSize">
+                  <option value="10">10 per page</option>
+                  <option value="25" selected>25 per page</option>
+                  <option value="50">50 per page</option>
+                  <option value="100">100 per page</option>
+                </select>
+              </div>
+              <button class="pagination-btn" id="nextPage" disabled>
+                Next <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+
+            <!-- Update Versions Button -->
+            <div class="update-versions-section">
+              <button class="btn btn-secondary" id="updateVersionsBtn">
+                <i class="fas fa-sync-alt"></i>
+                Update Versions
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: Chat Interface -->
+        <div class="right-panel">
+          <div class="panel-header">
+            <i class="fas fa-comments"></i>
+            <h2>AI Analyst</h2>
+            <div class="controls">
+              <div class="analysis-mode-toggle">
+                <label class="toggle-label">
+                  <input
+                    type="checkbox"
+                    id="detailedAnalysisMode"
+                    class="analysis-checkbox"
+                  />
+                  <span class="analysis-toggle-text">Detailed Analysis</span>
+                  <i
+                    class="fas fa-info-circle analysis-info"
+                    title="Enable comprehensive legal analysis with contradiction detection, temporal tracking, and cross-document reasoning"
+                  ></i>
+                </label>
+              </div>
+              <div class="llm-selector">
+                <select id="llmProvider">
+                  <option value="groq">Groq (Fast)</option>
+                  <option value="openai">OpenAI</option>
+                  <option value="vertexai" selected>Vertex AI (Gemini)</option>
+                  <option value="mock">Test Mode</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Analysis Configuration Panel -->
+          <div
+            class="analysis-config"
+            id="analysisConfig"
+            style="display: none"
+          >
+            <div class="config-header">
+              <i class="fas fa-cogs"></i>
+              <h3>Analysis Configuration</h3>
+            </div>
+            <div class="config-options">
+              <div class="config-row">
+                <label class="config-option">
+                  <input
+                    type="checkbox"
+                    id="enableContradictionDetection"
+                    checked
+                  />
+                  <span class="config-label">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Contradiction Detection
+                  </span>
+                  <small
+                    >Identify conflicts and inconsistencies across
+                    documents</small
+                  >
+                </label>
+              </div>
+              <div class="config-row">
+                <label class="config-option">
+                  <input type="checkbox" id="enableTemporalTracking" checked />
+                  <span class="config-label">
+                    <i class="fas fa-clock"></i>
+                    Temporal Tracking
+                  </span>
+                  <small>Track how legal positions evolve over time</small>
+                </label>
+              </div>
+              <div class="config-row">
+                <label class="config-option">
+                  <input
+                    type="checkbox"
+                    id="enableCrossDocumentReasoning"
+                    checked
+                  />
+                  <span class="config-label">
+                    <i class="fas fa-link"></i>
+                    Cross-Document Reasoning
+                  </span>
+                  <small
+                    >Connect related provisions across multiple documents</small
+                  >
+                </label>
+              </div>
+              <div class="config-row">
+                <label class="config-option">
+                  <span class="config-label">
+                    <i class="fas fa-memory"></i>
+                    Max Analysis Tokens
+                  </span>
+                  <input
+                    type="number"
+                    id="maxAnalysisTokens"
+                    value="300000"
+                    min="50000"
+                    max="500000"
+                    step="10000"
+                    class="token-input"
+                  />
+                  <small
+                    >Maximum tokens for comprehensive analysis (50k-500k)</small
+                  >
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Messages -->
+          <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+              <div class="message bot-message">
+                <div class="message-avatar">
+                  <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                  <p>
+                    Welcome! I'm a legal AI assistant. Upload documents and ask
+                    me questions about them.
+                  </p>
+                  <div class="message-time">System</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="chat-input-section">
+              <div class="quick-questions">
+                <button
+                  class="quick-btn"
+                  data-question="Analyze the main terms of these contracts"
+                >
+                  <i class="fas fa-search"></i> Contract Analysis
+                </button>
+                <button
+                  class="quick-btn"
+                  data-question="What are the risks in these documents?"
+                >
+                  <i class="fas fa-exclamation-triangle"></i> Find Risks
+                </button>
+                <button
+                  class="quick-btn"
+                  data-question="Compare the documents and mention all changes between them. If there are none, mention that."
+                >
+                  <i class="fas fa-balance-scale"></i> Compare documents
+                </button>
+                <button
+                  class="quick-btn"
+                  data-question="Summarize key obligations from all documents"
+                >
+                  <i class="fas fa-list-ul"></i> Key Obligations
+                </button>
+                <button class="quick-btn" id="findClientBtn">
+                  <i class="fas fa-user-tie"></i> Find related to Client
+                </button>
+                <button
+                  class="quick-btn"
+                  id="checkDueDateBtn"
+                  data-question="Check the due dates of the documents and return information regarding their validity, for each document you should only return 'Valid until: {documentValidityDate}', or 'Invalid', or 'No due date', nothing else. Today's date is {todayDate}"
+                >
+                  <i class="fas fa-calendar-check"></i> Check Due Date(s)
+                </button>
+                <button class="quick-btn" id="prolongDurationBtn">
+                  <i class="fas fa-calendar-plus"></i> Prolong Duration
+                </button>
+              </div>
+
+              <div class="chat-input">
+                <input
+                  type="text"
+                  id="messageInput"
+                  placeholder="Ask a question about the documents..."
+                  disabled
+                />
+                <button id="sendBtn" disabled>
+                  <i class="fas fa-paper-plane"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Loading Overlay -->
+      <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+          <div class="spinner"></div>
+          <p id="loadingText">Processing request...</p>
+        </div>
+      </div>
+
+      <!-- Toast Notifications -->
+      <div class="toast-container" id="toastContainer"></div>
+
+      <!-- Prolong Duration Modal -->
+      <div class="modal" id="prolongDurationModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Prolong Contract Duration</h3>
+            <button class="modal-close" id="prolongDurationModalClose">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Select the new due date for the contract:</p>
+            <div class="date-input-container">
+              <label for="prolongDatePicker">New Due Date:</label>
+              <input
+                type="date"
+                id="prolongDatePicker"
+                class="date-picker"
+                min=""
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" id="prolongCancelBtn">
+              Cancel
+            </button>
+            <button class="btn btn-primary" id="prolongConfirmBtn" disabled>
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Find Client Modal -->
+      <div class="modal" id="findClientModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Find Documents by Client</h3>
+            <button class="modal-close" id="findClientModalClose">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Enter the client name to search for related documents:</p>
+            <div class="client-input-container">
+              <label for="clientNameInput">Client Name:</label>
+              <input
+                type="text"
+                id="clientNameInput"
+                class="client-name-input"
+                placeholder="Enter client name..."
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" id="clientSearchCancelBtn">
+              Cancel
+            </button>
+            <button class="btn btn-primary" id="clientSearchBtn" disabled>
+              Search
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="/static/script.js"></script>
+  </body>
+</html>

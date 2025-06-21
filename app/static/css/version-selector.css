@@ -1,0 +1,345 @@
+/* Version Selector Component Styles */
+
+.version-selector {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.version-selector__main {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.version-selector__main label {
+    font-weight: 600;
+    color: #495057;
+    white-space: nowrap;
+}
+
+.version-selector__main select {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9rem;
+}
+
+.version-selector__main button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #007bff;
+    background: white;
+    color: #007bff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.version-selector__main button:hover {
+    background: #007bff;
+    color: white;
+}
+
+.version-selector__main button.active {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.version-selector__compare {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #e9ecef;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.version-selector__compare label {
+    font-weight: 600;
+    color: #495057;
+    white-space: nowrap;
+}
+
+.version-selector__compare select {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9rem;
+}
+
+.version-selector__compare button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #28a745;
+    background: #28a745;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.version-selector__compare button:hover:not(:disabled) {
+    background: #218838;
+    border-color: #218838;
+}
+
+.version-selector__compare button:disabled {
+    background: #6c757d;
+    border-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.version-selector__info {
+    padding: 0.75rem;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.version-details {
+    line-height: 1.5;
+}
+
+.version-summary {
+    line-height: 1.5;
+}
+
+.status-processed {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.status-processing {
+    color: #ffc107;
+    font-weight: 600;
+}
+
+.status-pending {
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.status-failed {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+/* Diff Modal Styles */
+.diff-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.diff-modal-content {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 1200px;
+    max-height: 90%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.diff-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #dee2e6;
+    background: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+.diff-modal-header h3 {
+    margin: 0;
+    color: #495057;
+}
+
+.diff-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6c757d;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.diff-modal-close:hover {
+    color: #495057;
+}
+
+.diff-modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.diff-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.diff-document {
+    font-size: 0.9rem;
+}
+
+.diff-stats {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 0.75rem;
+    background: #e9ecef;
+    border-radius: 4px;
+}
+
+.diff-stat {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.diff-stat.added {
+    background: #d4edda;
+    color: #155724;
+}
+
+.diff-stat.removed {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.diff-stat.similarity {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.diff-content {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* Diff line styles */
+.diff-added {
+    background: #d4edda;
+    color: #155724;
+    padding: 0.25rem 0.5rem;
+    border-left: 3px solid #28a745;
+}
+
+.diff-removed {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 0.25rem 0.5rem;
+    border-left: 3px solid #dc3545;
+}
+
+.diff-context {
+    background: white;
+    color: #495057;
+    padding: 0.25rem 0.5rem;
+}
+
+.diff-hunk {
+    background: #e9ecef;
+    color: #6c757d;
+    padding: 0.25rem 0.5rem;
+    font-weight: 600;
+    border-left: 3px solid #6c757d;
+}
+
+.diff-marker {
+    font-weight: bold;
+    margin-right: 0.5rem;
+}
+
+/* Inline diff styles */
+.diff-inline-added {
+    background: #d4edda;
+    color: #155724;
+    padding: 0.1rem 0.2rem;
+    border-radius: 2px;
+}
+
+.diff-inline-removed {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 0.1rem 0.2rem;
+    border-radius: 2px;
+    text-decoration: line-through;
+}
+
+/* Alert styles */
+.alert {
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .version-selector__main {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .version-selector__compare {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .diff-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .diff-stats {
+        flex-direction: column;
+    }
+    
+    .diff-modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
+}

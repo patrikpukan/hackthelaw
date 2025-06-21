@@ -1,0 +1,127 @@
+EMPLOYMENT CONTRACT
+
+TechInnovations LLC
+1234 Technology Street
+San Francisco, CA 94105
+
+CONTRACT NO: EMP-2024-001
+DATE: January 15, 2024
+
+EMPLOYER: TechInnovations LLC (hereinafter "Company")
+EMPLOYEE: John Smith (hereinafter "Employee")
+
+ARTICLE 1. GENERAL PROVISIONS
+
+1.1. This employment contract is concluded between TechInnovations LLC and John Smith for the position of Senior Software Developer.
+
+1.2. Work location: Company headquarters at 1234 Technology Street, San Francisco, CA 94105, with possibility of remote work up to 3 days per week.
+
+1.3. Contract effective date: February 1, 2024
+
+ARTICLE 2. POSITION AND DUTIES
+
+2.1. Employee is hired as Senior Software Developer (full-time position).
+
+2.2. Primary responsibilities:
+- Software development and architecture design
+- Code review and mentoring junior developers  
+- Technical documentation creation
+- Participation in planning and design meetings
+- Compliance with company development standards
+
+2.3. Employee reports directly to the Engineering Manager.
+
+ARTICLE 3. COMPENSATION
+
+3.1. Base annual salary: $120,000 (One hundred twenty thousand US dollars)
+
+3.2. Salary is paid monthly on the 10th and 25th of each month.
+
+3.3. Performance bonus: up to 50% of quarterly base salary based on individual and company performance metrics.
+
+3.4. Annual salary review conducted each January.
+
+ARTICLE 4. BENEFITS
+
+4.1. Health insurance: Company provides comprehensive health coverage up to $25,000 annually.
+
+4.2. Meal allowance: $1,200 per month for business meals and office catering.
+
+4.3. Company vehicle: Employee is provided with a company car for business and limited personal use.
+
+4.4. Professional development: Annual budget of $5,000 for conferences, training, and certification.
+
+ARTICLE 5. WORKING HOURS AND VACATION
+
+5.1. Standard work week: 40 hours (Monday-Friday, 9:00 AM - 6:00 PM)
+
+5.2. Overtime work may be required with advance notice and additional compensation.
+
+5.3. Annual vacation: 28 calendar days plus 7 additional days for overtime work performed.
+
+5.4. Sick leave: 10 days annually with full pay.
+
+ARTICLE 6. CONFIDENTIALITY
+
+6.1. Employee agrees to maintain strict confidentiality of all proprietary information, trade secrets, and business data.
+
+6.2. Confidentiality obligation continues for 3 years after employment termination.
+
+6.3. Employee may not use confidential information for personal benefit or disclose to third parties.
+
+ARTICLE 7. TERMINATION CONDITIONS
+
+7.1. Either party may terminate this contract with 14 days written notice.
+
+7.2. Company termination without cause: Employee receives 2 months' salary as severance.
+
+7.3. Company termination with cause: Standard final payments only.
+
+7.4. Employee resignation: Standard final payments only.
+
+7.5. Cause for immediate termination includes:
+- Breach of confidentiality agreement
+- Absence from work for more than 4 consecutive hours without notice
+- Reporting to work under influence of alcohol or drugs
+- Violation of company policies or code of conduct
+
+ARTICLE 8. INTELLECTUAL PROPERTY
+
+8.1. All work products, inventions, and intellectual property created during employment belong to the Company.
+
+8.2. Employee agrees to cooperate in protecting Company intellectual property rights.
+
+ARTICLE 9. NON-COMPETE CLAUSE
+
+9.1. For 12 months after termination, Employee may not work for direct competitors in the same technological domain.
+
+9.2. Geographic restriction applies within 50 miles of company headquarters.
+
+ARTICLE 10. DISPUTE RESOLUTION
+
+10.1. Disputes shall be resolved through mediation first, then arbitration if necessary.
+
+10.2. This contract is governed by California state law.
+
+ARTICLE 11. FINAL PROVISIONS
+
+11.1. Contract amendments must be in writing and signed by both parties.
+
+11.2. If any provision is found invalid, remaining provisions remain in effect.
+
+11.3. This contract supersedes all previous agreements between the parties.
+
+
+SIGNATURES:
+
+COMPANY:                          EMPLOYEE:
+TechInnovations LLC              John Smith
+
+_____________________           _____________________
+Sarah Johnson                    John Smith
+CEO                             Employee
+
+Date: January 15, 2024          Date: January 15, 2024
+
+
+LEGAL NOTICE: This contract has been reviewed by legal counsel and complies with applicable labor laws. Both parties acknowledge understanding all terms and conditions. 

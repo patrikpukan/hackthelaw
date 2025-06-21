@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Version Management</title>
+    
+    <!-- CSS Dependencies -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/version-selector.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/diff-viewer.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/version-toggle-controls.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/version-aware-chat.css') }}" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            color: #495057;
+        }
+        
+        .main-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            background: white;
+            border-right: 1px solid #dee2e6;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+        
+        .main-content {
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .header h1 {
+            margin: 0 0 0.5rem 0;
+            color: #495057;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        
+        .header p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+        
+        .content-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: white;
+            color: #6c757d;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: 1px solid #dee2e6;
+        }
+        
+        .tab-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        
+        .tab-btn:hover:not(.active) {
+            background: #f8f9fa;
+            border-color: #adb5bd;
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+        
+        .sidebar-section h3 {
+            margin: 0 0 1rem 0;
+            color: #495057;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .family-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .family-item {
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .family-item:hover {
+            border-color: #007bff;
+            background: #f8f9ff;
+        }
+        
+        .family-item.active {
+            border-color: #007bff;
+            background: #e3f2fd;
+        }
+        
+        .family-name {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.25rem;
+        }
+        
+        .family-meta {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #f5c6cb;
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                border-right: none;
+                border-bottom: 1px solid #dee2e6;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <h3><i class="fas fa-cog"></i> Version Controls</h3>
+                <div id="version-controls"></div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3><i class="fas fa-folder"></i> Document Families</h3>
+                <div id="family-list-container">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading families...
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3><i class="fas fa-search"></i> Quick Search</h3>
+                <div id="quick-search"></div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>Document Version Management</h1>
+                <p>Manage document versions, compare changes, and analyze version history</p>
+            </div>
+            
+            <div class="content-tabs">
+                <button class="tab-btn active" data-tab="overview">Overview</button>
+                <button class="tab-btn" data-tab="versions">Version Manager</button>
+                <button class="tab-btn" data-tab="compare">Compare Versions</button>
+                <button class="tab-btn" data-tab="search">Advanced Search</button>
+                <button class="tab-btn" data-tab="chat">Version-Aware Chat</button>
+            </div>
+            
+            <!-- Overview Tab -->
+            <div id="overview-tab" class="tab-content active">
+                <h2>System Overview</h2>
+                <div id="system-stats"></div>
+                <div id="recent-activity"></div>
+            </div>
+            
+            <!-- Version Manager Tab -->
+            <div id="versions-tab" class="tab-content">
+                <div id="version-manager"></div>
+            </div>
+            
+            <!-- Compare Versions Tab -->
+            <div id="compare-tab" class="tab-content">
+                <div id="diff-viewer"></div>
+            </div>
+            
+            <!-- Advanced Search Tab -->
+            <div id="search-tab" class="tab-content">
+                <div id="version-aware-search"></div>
+            </div>
+            
+            <!-- Version-Aware Chat Tab -->
+            <div id="chat-tab" class="tab-content">
+                <div id="version-aware-chat"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript Dependencies -->
+    <script src="{{ url_for('static', filename='js/version-selector.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/diff-viewer.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/version-manager.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/version-toggle-controls.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/version-aware-search.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/version-aware-chat.js') }}"></script>
+    
+    <script>
+        // Global application state
+        const app = {
+            currentFamily: null,
+            selectedVersions: [],
+            components: {},
+            settings: {}
+        };
+        
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeComponents();
+            loadDocumentFamilies();
+            setupTabNavigation();
+            setupEventListeners();
+        });
+        
+        function initializeComponents() {
+            // Initialize Version Toggle Controls
+            app.components.versionControls = new VersionToggleControls('version-controls', {
+                onSettingsChange: (settings) => {
+                    app.settings = settings;
+                    updateComponentSettings();
+                },
+                onModeChange: (mode, settings) => {
+                    console.log('Version mode changed:', mode);
+                    updateSearchMode(mode);
+                }
+            });
+            
+            // Initialize Version Manager
+            app.components.versionManager = new VersionManager('version-manager', {
+                onVersionSelect: (versionId) => {
+                    console.log('Version selected:', versionId);
+                },
+                onCompareRequest: (version1Id, version2Id) => {
+                    switchToTab('compare');
+                    app.components.diffViewer.loadDiff(version1Id, version2Id);
+                }
+            });
+            
+            // Initialize Diff Viewer
+            app.components.diffViewer = new DiffViewer('diff-viewer', {
+                defaultViewMode: 'side-by-side'
+            });
+            
+            // Initialize Version-Aware Search
+            app.components.versionSearch = new VersionAwareSearch('version-aware-search', {
+                onSearchResults: (results) => {
+                    console.log('Search results:', results);
+                },
+                onVersionChange: (versionMode) => {
+                    console.log('Search version mode changed:', versionMode);
+                }
+            });
+            
+            // Initialize Version-Aware Chat
+            app.components.versionChat = new VersionAwareChat('version-aware-chat', {
+                showVersionControls: true,
+                defaultVersionMode: 'latest'
+            });
+            
+            // Initialize Quick Search
+            initializeQuickSearch();
+            
+            // Initialize System Stats
+            loadSystemStats();
+        }
+        
+        function initializeQuickSearch() {
+            document.getElementById('quick-search').innerHTML = `
+                <div class="quick-search">
+                    <input type="text" id="quick-search-input" placeholder="Quick search..." 
+                           class="form-control">
+                    <div id="quick-search-results" class="quick-search-results"></div>
+                </div>
+            `;
+            
+            const searchInput = document.getElementById('quick-search-input');
+            searchInput.addEventListener('input', debounce(performQuickSearch, 300));
+        }
+        
+        async function loadDocumentFamilies() {
+            try {
+                const response = await fetch('/api/v1/history/families');
+                if (!response.ok) throw new Error('Failed to load families');
+                
+                const data = await response.json();
+                renderFamilyList(data.families);
+                
+            } catch (error) {
+                console.error('Failed to load families:', error);
+                document.getElementById('family-list-container').innerHTML = `
+                    <div class="error">Failed to load document families</div>
+                `;
+            }
+        }
+        
+        function renderFamilyList(families) {
+            const container = document.getElementById('family-list-container');
+            
+            if (families.length === 0) {
+                container.innerHTML = '<div class="loading">No document families found</div>';
+                return;
+            }
+            
+            const familyList = families.map(family => `
+                <div class="family-item" data-family-id="${family.family_id}" 
+                     onclick="selectFamily('${family.family_id}')">
+                    <div class="family-name">${family.filenames}</div>
+                    <div class="family-meta">
+                        ${family.version_count} versions • 
+                        Last updated: ${new Date(family.last_updated).toLocaleDateString()}
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = `<div class="family-list">${familyList}</div>`;
+        }
+        
+        function selectFamily(familyId) {
+            // Update UI
+            document.querySelectorAll('.family-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.familyId === familyId);
+            });
+            
+            app.currentFamily = familyId;
+            
+            // Load family data in version manager
+            app.components.versionManager.loadFamily(familyId);
+            
+            // Switch to versions tab if not already there
+            if (document.querySelector('.tab-btn.active').dataset.tab === 'overview') {
+                switchToTab('versions');
+            }
+        }
+        
+        function setupTabNavigation() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tabName = btn.dataset.tab;
+                    switchToTab(tabName);
+                });
+            });
+        }
+        
+        function switchToTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tabName);
+            });
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.toggle('active', content.id === `${tabName}-tab`);
+            });
+        }
+        
+        function setupEventListeners() {
+            // Global keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    switch (e.key) {
+                        case '1':
+                            e.preventDefault();
+                            switchToTab('overview');
+                            break;
+                        case '2':
+                            e.preventDefault();
+                            switchToTab('versions');
+                            break;
+                        case '3':
+                            e.preventDefault();
+                            switchToTab('compare');
+                            break;
+                        case '4':
+                            e.preventDefault();
+                            switchToTab('search');
+                            break;
+                        case '5':
+                            e.preventDefault();
+                            switchToTab('chat');
+                            break;
+                    }
+                }
+            });
+        }
+        
+        function updateComponentSettings() {
+            // Update all components with new settings
+            if (app.components.versionSearch) {
+                app.components.versionSearch.setSearchType(app.settings.searchMode);
+            }
+            
+            if (app.components.versionChat) {
+                app.components.versionChat.setVersionMode(app.settings.searchMode);
+            }
+        }
+        
+        function updateSearchMode(mode) {
+            // Update search components when mode changes
+            if (app.components.versionSearch) {
+                app.components.versionSearch.setSearchType(mode);
+            }
+        }
+        
+        async function performQuickSearch() {
+            const query = document.getElementById('quick-search-input').value.trim();
+            const resultsContainer = document.getElementById('quick-search-results');
+            
+            if (!query) {
+                resultsContainer.innerHTML = '';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/v1/history/search/versions?query=${encodeURIComponent(query)}&limit=5`);
+                if (!response.ok) throw new Error('Search failed');
+                
+                const data = await response.json();
+                
+                if (data.results.length === 0) {
+                    resultsContainer.innerHTML = '<div class="no-results">No results found</div>';
+                    return;
+                }
+                
+                const resultsHtml = data.results.map(result => `
+                    <div class="quick-result" onclick="selectFamily('${result.document_family_id || result.document_id}')">
+                        <div class="result-title">${result.filename}</div>
+                        <div class="result-meta">v${result.version_number} • ${result.match_count} matches</div>
+                    </div>
+                `).join('');
+                
+                resultsContainer.innerHTML = resultsHtml;
+                
+            } catch (error) {
+                console.error('Quick search failed:', error);
+                resultsContainer.innerHTML = '<div class="error">Search failed</div>';
+            }
+        }
+        
+        async function loadSystemStats() {
+            try {
+                const response = await fetch('/api/v1/history/families');
+                if (!response.ok) throw new Error('Failed to load stats');
+                
+                const data = await response.json();
+                
+                const totalFamilies = data.families.length;
+                const totalVersions = data.families.reduce((sum, family) => sum + family.version_count, 0);
+                const avgVersionsPerFamily = totalFamilies > 0 ? (totalVersions / totalFamilies).toFixed(1) : 0;
+                
+                document.getElementById('system-stats').innerHTML = `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>${totalFamilies}</h3>
+                            <p>Document Families</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>${totalVersions}</h3>
+                            <p>Total Versions</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>${avgVersionsPerFamily}</h3>
+                            <p>Avg Versions per Family</p>
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Failed to load system stats:', error);
+            }
+        }
+        
+        // Utility functions
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+    
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2rem;
+            color: #007bff;
+        }
+        
+        .stat-card p {
+            margin: 0;
+            color: #6c757d;
+        }
+        
+        .quick-search {
+            position: relative;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .quick-search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        
+        .quick-result {
+            padding: 0.5rem;
+            border-bottom: 1px solid #f8f9fa;
+            cursor: pointer;
+        }
+        
+        .quick-result:hover {
+            background: #f8f9fa;
+        }
+        
+        .result-title {
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .result-meta {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        
+        .no-results, .error {
+            padding: 0.5rem;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</body>
+</html>
